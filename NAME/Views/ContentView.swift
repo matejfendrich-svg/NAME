@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Jediné hlavní okno aplikace (§4): obsah + přepínač obrazovek v dolním okraji uprostřed.
 struct ContentView: View {
-    let viewModel: AppViewModel
+    @ObservedObject var viewModel: AppViewModel
     let appDelegate: AppDelegate
     @Environment(\.colorScheme) private var colorScheme
 
