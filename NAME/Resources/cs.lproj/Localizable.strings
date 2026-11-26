@@ -1,0 +1,54 @@
+/* Czech localization — všechny uživatelsky viditelné texty aplikace (§8). */
+
+"screen.timeline" = "Timeline";
+"screen.export" = "Export";
+"menu.screen" = "Obrazovka";
+
+"count.one" = "1 fotografie";
+"count.few" = "%d fotografie";
+"count.many" = "%d fotografií";
+
+"timeline.add" = "Přidat fotografie";
+"timeline.sortExif" = "Seřadit dle EXIF";
+"timeline.empty" = "Přetáhni sem fotografie";
+
+"export.empty" = "Timeline je prázdná — vrať se na Timeline a přidej fotografie.";
+"export.backToTimeline" = "Zpět na Timeline";
+"export.mode.inPlace" = "Přejmenovat na místě";
+"export.mode.copy" = "Kopie do složky";
+"export.chooseFolder" = "Vybrat složku…";
+"export.folderNone" = "Žádná složka nezvolena";
+"export.rename" = "Přejmenovat soubory";
+"export.renaming" = "Přejmenovávám…";
+
+"config.title" = "Pojmenování";
+"config.baseName" = "Konstantní název";
+"config.baseName.placeholder" = "např. Vylet_Praha";
+"config.sanitized" = "Znaky „/“ a „:“ byly automaticky nahrazeny podtržítkem.";
+"config.sampleBase" = "Nazev";
+"config.position" = "Pozice čísla";
+"config.position.numberFirst" = "Číslo první";
+"config.position.nameFirst" = "Název první";
+"config.numberFormat" = "Formát čísla";
+"config.separator" = "Oddělovač";
+"config.sep.space" = "Mezera";
+"config.sep.dash" = "-";
+"config.sep.underscore" = "_";
+"config.sep.none" = "Žádný";
+"config.startNumber" = "Počáteční číslo";
+"config.preview" = "Náhled:";
+
+"table.title" = "Přejmenování";
+"table.order" = "Pořadí";
+"table.current" = "Současný název";
+"table.new" = "Nový název";
+"table.collision" = "Kolize názvu — přejmenování je blokováno, dokud konfiguraci neupravíš.";
+
+"done.count.renamed" = "Hotovo: %d souborů přejmenováno";
+"done.count.copied" = "Hotovo: %d souborů zkopírováno";
+"done.failures" = "Selhalo:";
+"done.undo" = "Vrátit přejmenování";
+"done.back" = "Zpět na Timeline";
+
+"undo.done" = "Původní názvy byly vráceny.";
+"undo.partial" = "Vrácení se nezdařilo u %d souborů.";
