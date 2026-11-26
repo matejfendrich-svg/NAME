@@ -1,4 +1,4 @@
-.PHONY: app dmg zip notarize clean run
+.PHONY: app dmg zip notarize ci-app clean run
 
 # Sestaví NAME.app (Release) do build/ — spusť na MacBooku
 app:
@@ -15,6 +15,10 @@ zip:
 # Notarizace (vyžaduje Apple Developer ID, viz scripts/notarize.sh)
 notarize:
 	./scripts/notarize.sh
+
+# Stáhne hotový NAME.app z CI (bez Xcode, potřeba přihlášený gh)
+ci-app:
+	./scripts/download-ci-app.sh
 
 # Spustí aplikaci v Debug přímo z Xcode buildu
 run:

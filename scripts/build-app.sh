@@ -1,8 +1,20 @@
 #!/bin/bash
-# Sestaví NAME.app (Release) připravený k instalaci na MacBooku.
-# Použití na MacBooku:  ./scripts/build-app.sh
+# Sestaví NAME.app (Release) připravený k instalaci na MacBooku — vyžaduje Xcode.
+# Použití na MacBooku:  ./scripts/build-app.sh   (bez Xcode použij: ./scripts/download-ci-app.sh)
 set -euo pipefail
 cd "$(dirname "$0")/.."
+
+mkdir -p build
+
+if ! xcodebuild -version >/dev/null 2>&1; then
+    echo "Chyba: Xcode není nainstalovaný (na Macu jsou jen Command Line Tools)."
+    echo "Varianta A — nainstaluj Xcode z App Storu a pak spusť:"
+    echo "  sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer"
+    echo "  make dmg"
+    echo "Varianta B — bez Xcode použij hotový build z CI:"
+    echo "  make ci-app"
+    exit 1
+fi
 
 DERIVED="build/DerivedData"
 APP="$DERIVED/Build/Products/Release/NAME.app"
@@ -26,7 +38,6 @@ fi
 codesign --display --verbose=2 "$APP" | head -5 || true
 
 echo "==> ZIP pro přenos…"
-mkdir -p build
 rm -f build/NAME.zip
 ditto -c -k --keepParent "$APP" build/NAME.zip
 
