@@ -15,8 +15,11 @@ extension UTType {
     static let rawRAF = UTType("com.matejfendrich-svg.raw.raf") ?? .data
     static let rawPEF = UTType("com.matejfendrich-svg.raw.pef") ?? .data
 
+    // UTType.webp nemá statický člen ve starších SDK — použijeme deklarovaný identifikátor.
+    static let webP = UTType("org.webmproject.webp") ?? .data
+
     static let supportedImageTypes: [UTType] = [
-        .jpeg, .png, .tiff, .heic, .heif, .webp,
+        .jpeg, .png, .tiff, .heic, .heif, .webP,
         .rawCR2, .rawCR3, .rawARW, .rawNEF, .rawDNG, .rawORF, .rawRW2, .rawRAF, .rawPEF,
     ]
 

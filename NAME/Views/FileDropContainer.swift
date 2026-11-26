@@ -54,25 +54,25 @@ final class DropContainerView: NSView {
         info.draggingPasteboard.types.contains(UTType.fileURL.identifier)
     }
 
-    func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+    override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
         guard containsFileURL(sender) else { return [] }
         onTargetedChange(true)
         return .copy
     }
 
-    func draggingUpdated(_ sender: NSDraggingInfo) -> NSDragOperation {
+    override func draggingUpdated(_ sender: NSDraggingInfo) -> NSDragOperation {
         containsFileURL(sender) ? .copy : []
     }
 
-    func draggingExited(_ sender: NSDraggingInfo?) {
+    override func draggingExited(_ sender: NSDraggingInfo?) {
         onTargetedChange(false)
     }
 
-    func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
+    override func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
         true
     }
 
-    func performDrop(_ sender: NSDraggingInfo) -> Bool {
+    override func performDrop(_ sender: NSDraggingInfo) -> Bool {
         onTargetedChange(false)
         var urls: [URL] = []
         for item in sender.draggingPasteboard.pasteboardItems ?? [] {
