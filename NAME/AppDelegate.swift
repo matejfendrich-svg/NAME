@@ -6,7 +6,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @Published var openedFiles: [URL] = []
 
     func application(_ application: NSApplication, openFiles files: [String]) {
-        NSApp.reply(toOpenOrPrint: true)
+        NSApp.reply(toOpenOrPrint: .success)
         openedFiles.append(contentsOf: files.compactMap { URL(fileURLWithPath: $0) })
     }
 
