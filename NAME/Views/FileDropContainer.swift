@@ -8,13 +8,13 @@ import UniformTypeIdentifiers
 struct FileDropContainer<Content: View>: NSViewRepresentable {
     @Binding var isTargeted: Bool
     let onFiles: ([URL]) -> Void
-    let content: Content
+    @ViewBuilder let content: () -> Content
 
     func makeNSView(context: Context) -> DropContainerView {
         let view = DropContainerView()
         view.onFiles = onFiles
         view.onTargetedChange = { isTargeted = $0 }
-        let hosting = NSHostingView(rootView: AnyView(content))
+        let hosting = NSHostingView(rootView: AnyView(content()))
         hosting.autoresizingMask = [.width, .height]
         hosting.frame = view.bounds
         view.addSubview(hosting)
@@ -25,7 +25,7 @@ struct FileDropContainer<Content: View>: NSViewRepresentable {
     func updateNSView(_ nsView: DropContainerView, context: Context) {
         nsView.onFiles = onFiles
         nsView.onTargetedChange = { isTargeted = $0 }
-        nsView.hostingView?.rootView = AnyView(content)
+        nsView.hostingView?.rootView = AnyView(content())
     }
 
     func makeCoordinator() -> Coordinator {
@@ -42,16 +42,16 @@ final class DropContainerView: NSView {
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
-        registerForDraggedTypes([UTType.fileURL.identifier])
+        registerForDraggedTypes([.fileURL])
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        registerForDraggedTypes([UTType.fileURL.identifier])
+        registerForDraggedTypes([.fileURL])
     }
 
     private func containsFileURL(_ info: NSDraggingInfo) -> Bool {
-        info.draggingPasteboard.types.contains(UTType.fileURL.identifier)
+        info.draggingPasteboard.types?.contains(.fileURL) ?? false
     }
 
     override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
@@ -76,7 +76,7 @@ final class DropContainerView: NSView {
         onTargetedChange(false)
         var urls: [URL] = []
         for item in sender.draggingPasteboard.pasteboardItems ?? [] {
-            if let string = item.string(forType: UTType.fileURL.identifier),
+            if let string = item.string(forType: .fileURL),
                let url = URL(string: string),
                url.isFileURL {
                 urls.append(url)
