@@ -72,7 +72,7 @@ final class DropContainerView: NSView {
         true
     }
 
-    override func performDrop(_ sender: NSDraggingInfo) -> Bool {
+    func performDrop(_ sender: NSDraggingInfo) -> Bool {
         onTargetedChange(false)
         var urls: [URL] = []
         for item in sender.draggingPasteboard.pasteboardItems ?? [] {
