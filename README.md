@@ -27,6 +27,31 @@ fotografie na disku podle jejich pořadí na timeline (např. `01 - Vylet_Praha.
 
 Otevři `NAME.xcodeproj` v Xcode 15+ a spusť target **NAME** (⌘R).
 
+## Instalace na MacBook
+
+Na MacBooku naklonuj repo a pusť jeden příkaz:
+
+```bash
+git clone https://github.com/matejfendrich-svg/NAME.git
+cd NAME
+make dmg        # sestaví Release, podepíše a vytvoří build/NAME.dmg
+```
+
+Pak otevři `build/NAME.dmg` a přetáhni **NAME.app** do `Applications`.
+
+Případně jen aplikace bez DMG: `make app` → `build/NAME.zip` (přenes přes AirDrop/USB,
+rozbal a přetáhni `NAME.app` do Applications). Skripty `scripts/build-app.sh` nejprve
+zkusí běžný podpis přes Xcode; když není k dispozici vývojářský certifikát, použijí
+ad-hoc podpis (`codesign -s -`), který stačí pro spuštění na vlastním Macu.
+
+Poznámka ke Gatekeeperu: pokud by macOS při prvním spuštění hlásilo „pochází od
+neidentifikovaného vývojáře“, klikni na aplikaci **pravým tlačítkem → Otevřít**.
+Pro distribuci ostatním uživatelům je potřeba notarizace Apple Developer ID:
+`make notarize` (viz `scripts/notarize.sh`).
+
+CI: workflow `.github/workflows/build.yml` sestaví aplikaci na `macos-latest` runneru
+a uloží `NAME.app` jako artifact ke stažení.
+
 ## Rozhodnutí nad rámec specifikace (sekce 11)
 
 1. Tmavý režim: paleta se invertuje podle režimu systému.
