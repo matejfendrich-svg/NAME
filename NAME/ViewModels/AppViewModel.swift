@@ -1,6 +1,7 @@
 import Foundation
 import AppKit
 import Combine
+import UniformTypeIdentifiers
 
 enum Screen: Hashable {
     case timeline
@@ -13,7 +14,7 @@ enum RenameMode: Hashable {
 }
 
 /// Hlavní stav aplikace (MVVM, §8). Stav přetrvává při přepínání obrazovek.
-@MainActor
+/// Mutace @Published probíhají na hlavním vlákně (MainActor.run), čtení EXIF a přejmenování běží na pozadí.
 final class AppViewModel: ObservableObject {
     @Published var items: [PhotoItem] = [] { didSet { recomputeRows() } }
     @Published var screen: Screen = .timeline
@@ -85,9 +86,11 @@ final class AppViewModel: ObservableObject {
             case (_, nil): return true
             }
         }
-        items = sorted.map { $0.item }
-        dropTargetIndex = nil
-        draggingID = nil
+        await MainActor.run {
+            items = sorted.map { $0.item }
+            dropTargetIndex = nil
+            draggingID = nil
+        }
     }
 
     // MARK: - Návrhy názvů a kolize (§6.2, §6.3, §9.4)
@@ -149,9 +152,11 @@ final class AppViewModel: ObservableObject {
 
     func runRename() async {
         guard canRename else { return }
-        isRenaming = true
-        renameProgress = (0, items.count)
-        notice = nil
+        await MainActor.run {
+            isRenaming = true
+            renameProgress = (0, items.count)
+            notice = nil
+        }
         let snapshot = items
         let proposals = Dictionary(uniqueKeysWithValues: rows.map { ($0.id, $0.proposedName) })
         let mode = renameMode
@@ -163,17 +168,19 @@ final class AppViewModel: ObservableObject {
                 }
             }
         }.value
-        lastRename = outcome.renamed
-        if mode == .inPlace {
-            for move in outcome.renamed {
-                if let index = items.firstIndex(where: { $0.url.standardizedFileURL.path == move.from.standardizedFileURL.path }) {
-                    items[index].url = move.to
+        await MainActor.run {
+            lastRename = outcome.renamed
+            if mode == .inPlace {
+                for move in outcome.renamed {
+                    if let index = items.firstIndex(where: { $0.url.standardizedFileURL.path == move.from.standardizedFileURL.path }) {
+                        items[index].url = move.to
+                    }
                 }
             }
+            result = outcome
+            renameProgress = nil
+            isRenaming = false
         }
-        result = outcome
-        renameProgress = nil
-        isRenaming = false
     }
 
     /// Undo (§11, ot. 5): vrátí původní názvy po přejmenování na místě.
@@ -183,14 +190,16 @@ final class AppViewModel: ObservableObject {
         let failures = await Task.detached(priority: .userInitiated) {
             RenameService.undo(moves: moves)
         }.value
-        for move in moves {
-            if let index = items.firstIndex(where: { $0.url.standardizedFileURL.path == move.to.standardizedFileURL.path }) {
-                items[index].url = move.from
+        await MainActor.run {
+            for move in moves {
+                if let index = items.firstIndex(where: { $0.url.standardizedFileURL.path == move.to.standardizedFileURL.path }) {
+                    items[index].url = move.from
+                }
             }
+            notice = failures.isEmpty
+                ? L("undo.done")
+                : String(format: L("undo.partial"), failures.count)
         }
-        notice = failures.isEmpty
-            ? L("undo.done")
-            : String(format: L("undo.partial"), failures.count)
     }
 
     /// „Zpět na Timeline“ po dokončení (§6.4): vyčistí relaci.
